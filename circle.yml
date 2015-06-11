@@ -7,6 +7,18 @@ machine:
     DOCKER_IMAGE_ELASTICSEARCH: docker.epages.com/epages/docs-elasticsearch
     DOCKER_IMAGE_NGINX: docker.epages.com/epages/docs-nginx
 
+dependencies:
+  cache_directories:
+    - "~/.docker"
+  post:
+    - mkdir -p ~/.docker
+    - if [[ -e ~/.docker/elasticsearch.tar ]]; then docker load -i ~/.docker/elasticsearch.tar; fi
+    - docker pull choffmeister/elasticsearch-prefilled:latest
+    - docker save choffmeister/elasticsearch-prefilled:latest > ~/.docker/elasticsearch.tar
+    - if [[ -e ~/.docker/nginx.tar ]]; then docker load -i ~/.docker/nginx.tar; fi
+    - docker pull nginx:1.9.1
+    - docker save nginx:1.9.1 > ~/.docker/nginx.tar
+
 test:
   override:
     - bundle exec rake test
